@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF Suavemente Seguindo o Cursor</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #f0f0f0;
+            /* 1. MUDANÇA: REMOVEMOS 'cursor: none;' para manter o cursor visível */
+            overflow: hidden;
+        }
+        
+        .cursor-image {
+            position: fixed; 
+            width: 50px; 
+            height: auto; 
+            
+            /* O transform inicial de centralização permanece para o visual */
+            transform: translate(-50%, -50%); 
+            
+            pointer-events: none; 
+            z-index: 9999;
+            
+            transition: transform 0.1s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="run.gif" alt="GIF de corrida" class="cursor-image">
+
+    <script>
+        const cursor = document.querySelector('.cursor-image');
+        
+        let targetX = 0;
+        let targetY = 0;
+        
+        let currentX = 0;
+        let currentY = 0;
+
+        // 2. MUDANÇA: FATOR DE SUAVIZAÇÃO REDUZIDO
+        // Reduzido de 0.1 para 0.05. Valores menores = movimento mais lento/mais delay.
+        const easingFactor = 0.01; 
+
+        // 1. Armazena a posição do mouse (alvo)
+        document.addEventListener('mousemove', (e) => {
+            targetX = e.clientX;
+            targetY = e.clientY;
+        });
+
+        // 2. Função de Loop para Animacão
+        function animate() {
+            // Cálculo da Suavização: O GIF percorre 5% da distância restante em cada frame.
+            currentX += (targetX - currentX) * easingFactor;
+            currentY += (targetY - currentY) * easingFactor;
+
+            // Aplica a nova posição ao elemento
+            cursor.style.transform = `translate(-50%, -50%) translate(${currentX}px, ${currentY}px)`;
+
+            requestAnimationFrame(animate);
+        }
+
+        // Inicia o loop de animação
+        animate();
+    </script>
+
+</body>
+</html>
